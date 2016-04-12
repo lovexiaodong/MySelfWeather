@@ -61,7 +61,6 @@ public class WeatherDB {
     public void saveCity(City city) {
         if (city != null) {
             ContentValues value = new ContentValues();
-            value.put("id", city.getId());
             value.put("city_name", city.getCityName());
             value.put("city_code", city.getCityCode());
             value.put("province_id", city.getProvinceId());
@@ -89,7 +88,6 @@ public class WeatherDB {
         if(county != null)
         {
             ContentValues value = new ContentValues();
-            value.put("id", county.getId());
             value.put("county_name", county.getCountyName());
             value.put("county_code", county.getCountyCode());
             value.put("city_id", county.getCityId());
