@@ -40,7 +40,7 @@ public class WeatherDB {
         if (province != null) {
             ContentValues value = new ContentValues();
             value.put("province_name", province.getProvinceName());
-            value.put("provinice_code", province.getProvinceCode());
+            value.put("province_code", province.getProvinceCode());
             db.insert("Province", null, value);
         }
     }

@@ -85,12 +85,12 @@ public class ChooseAreaActivity extends Activity {
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             titleView.setText("中国");
-            currentLever = LEVEL_PROVINCE;
         }
         else
         {
             queryFromServer(null, "province");
         }
+        currentLever = LEVEL_PROVINCE;
     }
 
     private  void queryCity()
@@ -105,12 +105,13 @@ public class ChooseAreaActivity extends Activity {
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             titleView.setText(selectProvince.getProvinceName());
-            currentLever = LEVEL_CITY;
+
         }
         else
         {
-            queryFromServer(null, "province");
+            queryFromServer(selectProvince.getProvinceCode(), "city");
         }
+        currentLever = LEVEL_CITY;
     }
     private  void queryCounty()
     {
@@ -124,12 +125,13 @@ public class ChooseAreaActivity extends Activity {
             adapter.notifyDataSetChanged();
             listView.setSelection(0);
             titleView.setText(selectCity.getCityName());
-            currentLever = LEVEL_COUNTY;
+
         }
         else
         {
-            queryFromServer(null, "county");
+            queryFromServer(selectCity.getCityCode(), "county");
         }
+        currentLever = LEVEL_COUNTY;
     }
 
     private void queryFromServer(String code, final String type)
@@ -137,11 +139,11 @@ public class ChooseAreaActivity extends Activity {
         String address ;
         if(!TextUtils.isEmpty(code))
         {
-            address = "http://www.weather.com.cn/data/list3/cityi" + code + ".xml";
+            address = "http://www.weather.com.cn/data/list3/city" + code + ".xml";
         }
         else
         {
-            address = "http://www.weather.com.cn/data/list3/cityi.xml";
+            address = "http://www.weather.com.cn/data/list3/city.xml";
         }
         showProgressDialog();
         HttpUtil.sendRequest(address, new HttpCallBackListener() {
@@ -172,9 +174,11 @@ public class ChooseAreaActivity extends Activity {
                             }
                             else if("city".equals(type))
                             {
+                                queryCity();
                             }
                             else if("county".equals(type))
                             {
+                                queryCounty();
                             }
                         }
                     });
@@ -216,7 +220,6 @@ public class ChooseAreaActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if(currentLever == LEVEL_CITY)
         {
             queryProvinces();
