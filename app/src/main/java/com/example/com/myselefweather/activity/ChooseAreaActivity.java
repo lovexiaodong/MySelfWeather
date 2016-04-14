@@ -2,6 +2,7 @@ package com.example.com.myselefweather.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -67,6 +68,11 @@ public class ChooseAreaActivity extends Activity {
                 } else if (currentLever == LEVEL_CITY) {
                     selectCity = cityList.get(position);
                     queryCounty();
+                }else{
+                    County county = countyList.get(position);
+                    Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+                    intent.putExtra(WeatherActivity.COUNTY_CODE, county.getCountyCode());
+                    startActivity(intent);
                 }
             }
         });

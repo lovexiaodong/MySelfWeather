@@ -1,8 +1,11 @@
 package com.example.com.myselefweather.activity;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -15,6 +18,8 @@ import com.example.com.myselefweather.util.HttpUtil;
 import com.example.com.myselefweather.util.Utility;
 
 import org.w3c.dom.Text;
+
+import java.util.Date;
 
 import static com.example.com.myselefweather.R.id.temp2;
 
@@ -55,9 +60,10 @@ public class WeatherActivity extends Activity {
         String countyCode = getIntent().getStringExtra(COUNTY_CODE);
         if(!TextUtils.isEmpty(countyCode))
         {
-            //// TODO: 2016/4/14  
+            publishText.setText("Synchronized...");
             weatherInfoLayout.setVisibility(View.VISIBLE);
             cityName.setVisibility(View.VISIBLE);
+            queryWeatherCode(countyCode);
         }
     }
     
@@ -76,7 +82,7 @@ public class WeatherActivity extends Activity {
                     if (!TextUtils.isEmpty(response)) {
                         String[] array = response.split("\\|");
                         if (array != null && array.length == 2) {
-                            String weatherCode = array[0];
+                            String weatherCode = array[1];
                             queryWeatherInfo(weatherCode);
                         }
                     }
@@ -95,17 +101,26 @@ public class WeatherActivity extends Activity {
             @Override
             public void onError(Exception e) {
 
+                Log.i("tag", e.toString());
             }
         });
     }
 
     private void showWeaher() {
-
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        temp1Text.setText(preferences.getString("temp1", ""));
+        temp2Text.setText(preferences.getString("temp2", ""));
+        weatherDespText.setText(preferences.getString("weatherDesp", ""));
+        publishText.setText("Today " + preferences.getString("publish", ""));
+        currentDateText.setText(preferences.getString("current_data", ""));
+        cityName.setText(preferences.getString("city_name", ""));
+        weatherInfoLayout.setVisibility(View.VISIBLE);
+        cityName.setVisibility(View.VISIBLE);
     }
 
     private void queryWeatherInfo(String weatherCode) {
 
-        String address = "http://www.weather.com.cn/data/cityinfo" + weatherCode + ".xml";
+        String address = "http://www.weather.com.cn/data/cityinfo/" + weatherCode + ".html";
         queryFromServer(address, "weatherCode");
     }
 
