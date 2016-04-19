@@ -3,7 +3,9 @@ package com.example.com.myselefweather.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
@@ -48,9 +50,19 @@ public class ChooseAreaActivity extends Activity {
     private int currentLever;
     private Province selectProvince;
     private City selectCity;
+    private boolean isFromWeatherAcitivity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isFromWeatherAcitivity = getIntent().getBooleanExtra("from_weather_city", false);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences.getBoolean("city_selected", false) && !isFromWeatherAcitivity)
+        {
+            Intent intent = new Intent(ChooseAreaActivity.this, WeatherActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.choose_area);
         titleView = (TextView) findViewById(R.id.title_text);

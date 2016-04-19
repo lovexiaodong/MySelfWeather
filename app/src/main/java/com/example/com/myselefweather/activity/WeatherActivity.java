@@ -1,6 +1,7 @@
 package com.example.com.myselefweather.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.com.myselefweather.R;
+import com.example.com.myselefweather.service.AutoUpateService;
 import com.example.com.myselefweather.util.HttpCallBackListener;
 import com.example.com.myselefweather.util.HttpUtil;
 import com.example.com.myselefweather.util.Utility;
@@ -32,7 +34,7 @@ import static com.example.com.myselefweather.R.id.temp2;
  * <p/>
  * Created by William.Zhang on 2016/4/14.
  */
-public class WeatherActivity extends Activity {
+public class WeatherActivity extends Activity implements View.OnClickListener{
 
     public static final String COUNTY_CODE = "county_code";
     private LinearLayout weatherInfoLayout;
@@ -56,6 +58,10 @@ public class WeatherActivity extends Activity {
         weatherDespText = (TextView) findViewById(R.id.weather_desp);
         temp1Text = (TextView) findViewById(R.id.temp1);
         temp2Text = (TextView) findViewById(R.id.temp2);
+        switchCity  = (Button) findViewById(R.id.swithc_city);
+        refresh = (Button) findViewById(R.id.refresh);
+        switchCity.setOnClickListener(this);
+        refresh.setOnClickListener(this);
         currentDateText = (TextView) findViewById(R.id.current_data);
         String countyCode = getIntent().getStringExtra(COUNTY_CODE);
         if(!TextUtils.isEmpty(countyCode))
@@ -65,6 +71,12 @@ public class WeatherActivity extends Activity {
             cityName.setVisibility(View.VISIBLE);
             queryWeatherCode(countyCode);
         }
+        else
+        {
+            showWeaher();
+        }
+        Intent intent = new Intent(this, AutoUpateService.class);
+        startService(intent);
     }
     
     private void queryWeatherCode(String code)
@@ -124,4 +136,29 @@ public class WeatherActivity extends Activity {
         queryFromServer(address, "weatherCode");
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.refresh:
+                publishText.setText("Synchronized....");
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                String city_code = preferences.getString("city_code","");
+                if(city_code != null)
+                {
+                    queryWeatherCode(city_code);
+                }
+                break;
+            case R.id.swithc_city:
+
+                Intent intent = new Intent(this, ChooseAreaActivity.class);
+                intent.putExtra("from_weather_city", true);
+                startActivity(intent);
+                finish();
+                break;
+            default:
+                break;
+
+        }
+    }
 }
